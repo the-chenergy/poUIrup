@@ -1,0 +1,9 @@
+{
+  "cSpell.words": ["MEIPASS", "poUIrup", "pystray"],
+  "code-runner.executorMap": {
+    "python": "conda activate pow; python src/app.py"
+    // "python": "conda activate pow; pyinstaller -F app.spec && dist/app $dir$fileNameWithoutExt"
+  },
+  "python.analysis.extraPaths": ["src"],
+  "python.pythonPath": "C:\\Users\\null\\.conda\\envs\\pow\\python.exe"
+}
