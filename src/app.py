@@ -6,7 +6,7 @@ Qianlang Chen
 T 04/06/21
 '''
 
-from model import Icon
+from view import Icon
 
 VERSION = 'v4.2.0 (Beta) T 04/06/21'
 TITLE = f'poUIrup\n{VERSION}'
@@ -21,7 +21,7 @@ def on_icon_suspend():
 
 def on_icon_exit():
     # Stopping the event loop lifts the block and allows the system to
-    # naturally exit.
+    # naturally exit
     Icon.stop()
 
 if __name__ == '__main__':

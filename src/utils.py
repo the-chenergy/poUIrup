@@ -12,6 +12,8 @@ from os import path
 def res_path(filename: str) -> str:
     '''Returns the relative path to some resource file.'''
     try:
+        # The secret place that PyInstaller stores (remaps) the application's
+        # files
         prefix = sys._MEIPASS
     except AttributeError:
         prefix = ''

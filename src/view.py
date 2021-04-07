@@ -1,5 +1,5 @@
 '''
-Model
+View
 
 poUIrup
 Qianlang Chen
@@ -32,5 +32,5 @@ class Icon:
         Icon._icon.run()
     
     def stop():
-        '''Stops the system tray icon and unblock the thread.'''
+        '''Stops the system tray icon and unblocks the thread.'''
         Icon._icon.stop()
