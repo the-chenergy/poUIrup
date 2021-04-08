@@ -1,0 +1,6 @@
+pyinstaller
+pynput
+PySimpleGUI
+pystray
+screeninfo
+yapf

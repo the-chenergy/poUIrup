@@ -5,7 +5,6 @@ poUIrup
 Qianlang Chen
 W 03/31/21
 '''
-
 import sys
 from os import path
 
@@ -17,4 +16,4 @@ def res_path(filename: str) -> str:
         prefix = sys._MEIPASS
     except AttributeError:
         prefix = ''
-    return path.join(prefix, filename)
+    return path.join(prefix, 'res', filename)

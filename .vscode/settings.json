@@ -1,5 +1,5 @@
 {
-  "cSpell.words": ["MEIPASS", "poUIrup", "pystray"],
+  "cSpell.words": ["MEIPASS", "poUIrup", "pystray", "Qianlang"],
   "code-runner.executorMap": {
     "python": "conda activate pow; python src/app.py"
     // "python": "conda activate pow; pyinstaller -F app.spec && dist/app $dir$fileNameWithoutExt"
