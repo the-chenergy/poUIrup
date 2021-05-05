@@ -4,7 +4,7 @@ import importlib
 import os
 import sys
 
-def get_pystray_module():
+def get_pynput_module():
     '''Adapted from pystray.__init__'''
     backend_name = os.environ.get('PYSTRAY_BACKEND', None)
     if backend_name:
@@ -17,18 +17,17 @@ def get_pystray_module():
         modules = ('appindicator', 'gtk', 'xorg')
     for module in modules:
         try:
-            importlib.import_module(f'pystray._{module}')
+            importlib.import_module(f'pynput.keyboard._{module}')
             return module
         except ImportError:
             pass
     raise ImportError(f'Unsupported platform: {sys.platform}')
 
 def get_hidden_imports():
-    pystray_module = get_pystray_module()
+    pynput_module = get_pynput_module()
     return [
-        f'pystray._{pystray_module}',
-        f'pynput.keyboard._{pystray_module}',
-        f'pynput.mouse._{pystray_module}',
+        f'pynput.keyboard._{pynput_module}',
+        f'pynput.mouse._{pynput_module}',
     ]
 
 block_cipher = None
