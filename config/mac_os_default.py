@@ -1,6 +1,8 @@
-if bool(False): from app import Key, Keyboard
+if bool(False):
+    from app import Key, Keyboard
+    from typing import Set, Tuple
 
-# VIRTUAL KEY CODES (not defined by pynput) ####################################
+## VIRTUAL KEY CODES (not defined by pynput) ###################################################
 
 Keyboard.A = 0x00
 Keyboard.S = 0x01
@@ -12,11 +14,11 @@ Keyboard.Z = 0x06
 Keyboard.X = 0x07
 Keyboard.C = 0x08
 Keyboard.V = 0x09
-Keyboard.B = 0x0B
-Keyboard.Q = 0x0C
-Keyboard.W = 0x0D
-Keyboard.E = 0x0E
-Keyboard.R = 0x0F
+Keyboard.B = 0x0b
+Keyboard.Q = 0x0c
+Keyboard.W = 0x0d
+Keyboard.E = 0x0e
+Keyboard.R = 0x0f
 Keyboard.Y = 0x10
 Keyboard.T = 0x11
 Keyboard.ONE = 0x12
@@ -27,12 +29,12 @@ Keyboard.SIX = 0x16
 Keyboard.FIVE = 0x17
 Keyboard.EQUAL = 0x18
 Keyboard.NINE = 0x19
-Keyboard.SEVEN = 0x1A
-Keyboard.DASH = 0x1B
-Keyboard.EIGHT = 0x1C
-Keyboard.ZERO = 0x1D
-Keyboard.RIGHT_SQUARE = 0x1E
-Keyboard.O = 0x1F
+Keyboard.SEVEN = 0x1a
+Keyboard.DASH = 0x1b
+Keyboard.EIGHT = 0x1c
+Keyboard.ZERO = 0x1d
+Keyboard.RIGHT_SQUARE = 0x1e
+Keyboard.O = 0x1f
 Keyboard.U = 0x20
 Keyboard.LEFT_SQUARE = 0x21
 Keyboard.I = 0x22
@@ -42,152 +44,220 @@ Keyboard.J = 0x26
 Keyboard.APOSTROPHE = 0x27
 Keyboard.K = 0x28
 Keyboard.SEMICOLON = 0x29
-Keyboard.BACK_SLASH = 0x2A
-Keyboard.COMMA = 0x2B
-Keyboard.FORWARD_SLASH = 0x2C
-Keyboard.N = 0x2D
-Keyboard.M = 0x2E
-Keyboard.DOT = 0x2F
+Keyboard.BACK_SLASH = 0x2a
+Keyboard.COMMA = 0x2b
+Keyboard.FORWARD_SLASH = 0x2c
+Keyboard.N = 0x2d
+Keyboard.M = 0x2e
+Keyboard.DOT = 0x2f
 Keyboard.GRAVE = 0x32
 
-# NORMAL LAYOUT ################################################################
+## NORMAL LAYOUT ###############################################################################
 
 # in_key -> (out_key, should_press_shift)
-normal = Keyboard._NORMAL_LAYOUT[0]
-normal[Keyboard.GRAVE] = (Keyboard.THREE, True)
-normal[Keyboard.ONE] = (Keyboard.FOUR, True)
-normal[Keyboard.TWO] = (Keyboard.SEVEN, True)
-normal[Keyboard.THREE] = (Keyboard.EIGHT, True)
-normal[Keyboard.FOUR] = (Keyboard.EQUAL, False)
-normal[Keyboard.FIVE] = (Keyboard.LEFT_SQUARE, True)
-normal[Keyboard.SIX] = (Keyboard.RIGHT_SQUARE, True)
-normal[Keyboard.SEVEN] = (Keyboard.COMMA, True)
-normal[Keyboard.EIGHT] = (Keyboard.DOT, True)
-normal[Keyboard.NINE] = (Keyboard.NINE, True)
-normal[Keyboard.ZERO] = (Keyboard.ZERO, True)
-normal[Keyboard.DASH] = (Keyboard.LEFT_SQUARE, False)
-normal[Keyboard.EQUAL] = (Keyboard.RIGHT_SQUARE, False)
-normal[Keyboard.Q] = (Keyboard.APOSTROPHE, False)
-normal[Keyboard.W] = (Keyboard.COMMA, False)
-normal[Keyboard.E] = (Keyboard.DOT, False)
-normal[Keyboard.R] = (Keyboard.P, False)
-normal[Keyboard.T] = (Keyboard.Y, False)
-normal[Keyboard.Y] = (Keyboard.F, False)
-normal[Keyboard.U] = (Keyboard.G, False)
-normal[Keyboard.I] = (Keyboard.C, False)
-normal[Keyboard.O] = (Keyboard.R, False)
-normal[Keyboard.P] = (Keyboard.L, False)
-normal[Keyboard.LEFT_SQUARE] = (Keyboard.FORWARD_SLASH, False)
-normal[Keyboard.RIGHT_SQUARE] = (Keyboard.BACK_SLASH, False)
-normal[Key.caps_lock.value.vk] = (Keyboard.DASH, False)
-normal[Keyboard.A] = (Keyboard.A, False)
-normal[Keyboard.S] = (Keyboard.O, False)
-normal[Keyboard.D] = (Keyboard.E, False)
-normal[Keyboard.F] = (Keyboard.I, False)
-normal[Keyboard.G] = (Keyboard.U, False)
-normal[Keyboard.H] = (Keyboard.D, False)
-normal[Keyboard.J] = (Keyboard.H, False)
-normal[Keyboard.K] = (Keyboard.T, False)
-normal[Keyboard.L] = (Keyboard.N, False)
-normal[Keyboard.SEMICOLON] = (Keyboard.S, False)
-normal[Keyboard.APOSTROPHE] = (Keyboard.DASH, True)
-normal[Keyboard.Z] = (Keyboard.SEMICOLON, False)
-normal[Keyboard.X] = (Keyboard.Q, False)
-normal[Keyboard.C] = (Keyboard.J, False)
-normal[Keyboard.V] = (Keyboard.K, False)
-normal[Keyboard.B] = (Keyboard.X, False)
-normal[Keyboard.N] = (Keyboard.B, False)
-normal[Keyboard.M] = (Keyboard.M, False)
-normal[Keyboard.COMMA] = (Keyboard.W, False)
-normal[Keyboard.DOT] = (Keyboard.V, False)
-normal[Keyboard.FORWARD_SLASH] = (Keyboard.Z, False)
+Keyboard._NORMAL_LAYOUT = (
+    # Not shifted
+    {
+        Keyboard.GRAVE: (Keyboard.THREE, True),
+        Keyboard.ONE: (Keyboard.FOUR, True),
+        Keyboard.TWO: (Keyboard.SEVEN, True),
+        Keyboard.THREE: (Keyboard.EIGHT, True),
+        Keyboard.FOUR: (Keyboard.EQUAL, False),
+        Keyboard.FIVE: (Keyboard.LEFT_SQUARE, True),
+        Keyboard.SIX: (Keyboard.RIGHT_SQUARE, True),
+        Keyboard.SEVEN: (Keyboard.COMMA, True),
+        Keyboard.EIGHT: (Keyboard.DOT, True),
+        Keyboard.NINE: (Keyboard.NINE, True),
+        Keyboard.ZERO: (Keyboard.ZERO, True),
+        Keyboard.DASH: (Keyboard.LEFT_SQUARE, False),
+        Keyboard.EQUAL: (Keyboard.RIGHT_SQUARE, False),
+        Keyboard.Q: (Keyboard.APOSTROPHE, False),
+        Keyboard.W: (Keyboard.COMMA, False),
+        Keyboard.E: (Keyboard.DOT, False),
+        Keyboard.R: (Keyboard.P, False),
+        Keyboard.T: (Keyboard.Y, False),
+        Keyboard.Y: (Keyboard.F, False),
+        Keyboard.U: (Keyboard.G, False),
+        Keyboard.I: (Keyboard.C, False),
+        Keyboard.O: (Keyboard.R, False),
+        Keyboard.P: (Keyboard.L, False),
+        Keyboard.LEFT_SQUARE: (Keyboard.FORWARD_SLASH, False),
+        Keyboard.RIGHT_SQUARE: (Keyboard.BACK_SLASH, False),
+        Key.caps_lock.value.vk: (Keyboard.DASH, False),
+        Keyboard.A: (Keyboard.A, False),
+        Keyboard.S: (Keyboard.O, False),
+        Keyboard.D: (Keyboard.E, False),
+        Keyboard.F: (Keyboard.I, False),
+        Keyboard.G: (Keyboard.U, False),
+        Keyboard.H: (Keyboard.D, False),
+        Keyboard.J: (Keyboard.H, False),
+        Keyboard.K: (Keyboard.T, False),
+        Keyboard.L: (Keyboard.N, False),
+        Keyboard.SEMICOLON: (Keyboard.S, False),
+        Keyboard.APOSTROPHE: (Keyboard.DASH, True),
+        Keyboard.Z: (Keyboard.SEMICOLON, False),
+        Keyboard.X: (Keyboard.Q, False),
+        Keyboard.C: (Keyboard.J, False),
+        Keyboard.V: (Keyboard.K, False),
+        Keyboard.B: (Keyboard.X, False),
+        Keyboard.N: (Keyboard.B, False),
+        Keyboard.M: (Keyboard.M, False),
+        Keyboard.COMMA: (Keyboard.W, False),
+        Keyboard.DOT: (Keyboard.V, False),
+        Keyboard.FORWARD_SLASH: (Keyboard.Z, False),
+    },
+    # Shifted
+    {
+        Keyboard.GRAVE: (Keyboard.GRAVE, False),
+        Keyboard.ONE: (Keyboard.ONE, False),
+        Keyboard.TWO: (Keyboard.TWO, False),
+        Keyboard.THREE: (Keyboard.THREE, False),
+        Keyboard.FOUR: (Keyboard.FOUR, False),
+        Keyboard.FIVE: (Keyboard.FIVE, False),
+        Keyboard.SIX: (Keyboard.SIX, False),
+        Keyboard.SEVEN: (Keyboard.SEVEN, False),
+        Keyboard.EIGHT: (Keyboard.EIGHT, False),
+        Keyboard.NINE: (Keyboard.NINE, False),
+        Keyboard.ZERO: (Keyboard.ZERO, False),
+        Keyboard.DASH: (Keyboard.SIX, True),
+        Keyboard.EQUAL: (Keyboard.GRAVE, True),
+        Keyboard.Q: (Keyboard.APOSTROPHE, True),
+        Keyboard.W: (Keyboard.FORWARD_SLASH, True),
+        Keyboard.E: (Keyboard.ONE, True),
+        Keyboard.R: (Keyboard.P, True),
+        Keyboard.T: (Keyboard.Y, True),
+        Keyboard.Y: (Keyboard.F, True),
+        Keyboard.U: (Keyboard.G, True),
+        Keyboard.I: (Keyboard.C, True),
+        Keyboard.O: (Keyboard.R, True),
+        Keyboard.P: (Keyboard.L, True),
+        Keyboard.LEFT_SQUARE: (Keyboard.FIVE, True),
+        Keyboard.RIGHT_SQUARE: (Keyboard.TWO, True),
+        Key.caps_lock.value.vk: (Keyboard.EQUAL, True),
+        Keyboard.A: (Keyboard.A, True),
+        Keyboard.S: (Keyboard.O, True),
+        Keyboard.D: (Keyboard.E, True),
+        Keyboard.F: (Keyboard.I, True),
+        Keyboard.G: (Keyboard.U, True),
+        Keyboard.H: (Keyboard.D, True),
+        Keyboard.J: (Keyboard.H, True),
+        Keyboard.K: (Keyboard.T, True),
+        Keyboard.L: (Keyboard.N, True),
+        Keyboard.SEMICOLON: (Keyboard.S, True),
+        Keyboard.APOSTROPHE: (Keyboard.BACK_SLASH, True),
+        Keyboard.Z: (Keyboard.SEMICOLON, True),
+        Keyboard.X: (Keyboard.Q, True),
+        Keyboard.C: (Keyboard.J, True),
+        Keyboard.V: (Keyboard.K, True),
+        Keyboard.B: (Keyboard.X, True),
+        Keyboard.N: (Keyboard.B, True),
+        Keyboard.M: (Keyboard.M, True),
+        Keyboard.COMMA: (Keyboard.W, True),
+        Keyboard.DOT: (Keyboard.V, True),
+        Keyboard.FORWARD_SLASH: (Keyboard.Z, True),
+    },
+)
 
-shifted = Keyboard._NORMAL_LAYOUT[Keyboard.MOD_SHIFT]
-shifted[Keyboard.GRAVE] = (Keyboard.GRAVE, False)
-shifted[Keyboard.ONE] = (Keyboard.ONE, False)
-shifted[Keyboard.TWO] = (Keyboard.TWO, False)
-shifted[Keyboard.THREE] = (Keyboard.THREE, False)
-shifted[Keyboard.FOUR] = (Keyboard.FOUR, False)
-shifted[Keyboard.FIVE] = (Keyboard.FIVE, False)
-shifted[Keyboard.SIX] = (Keyboard.SIX, False)
-shifted[Keyboard.SEVEN] = (Keyboard.SEVEN, False)
-shifted[Keyboard.EIGHT] = (Keyboard.EIGHT, False)
-shifted[Keyboard.NINE] = (Keyboard.NINE, False)
-shifted[Keyboard.ZERO] = (Keyboard.ZERO, False)
-shifted[Keyboard.DASH] = (Keyboard.SIX, True)
-shifted[Keyboard.EQUAL] = (Keyboard.GRAVE, True)
-shifted[Keyboard.Q] = (Keyboard.APOSTROPHE, True)
-shifted[Keyboard.W] = (Keyboard.FORWARD_SLASH, True)
-shifted[Keyboard.E] = (Keyboard.ONE, True)
-shifted[Keyboard.R] = (Keyboard.P, True)
-shifted[Keyboard.T] = (Keyboard.Y, True)
-shifted[Keyboard.Y] = (Keyboard.F, True)
-shifted[Keyboard.U] = (Keyboard.G, True)
-shifted[Keyboard.I] = (Keyboard.C, True)
-shifted[Keyboard.O] = (Keyboard.R, True)
-shifted[Keyboard.P] = (Keyboard.L, True)
-shifted[Keyboard.LEFT_SQUARE] = (Keyboard.FIVE, True)
-shifted[Keyboard.RIGHT_SQUARE] = (Keyboard.TWO, True)
-shifted[Key.caps_lock.value.vk] = (Keyboard.EQUAL, True)
-shifted[Keyboard.A] = (Keyboard.A, True)
-shifted[Keyboard.S] = (Keyboard.O, True)
-shifted[Keyboard.D] = (Keyboard.E, True)
-shifted[Keyboard.F] = (Keyboard.I, True)
-shifted[Keyboard.G] = (Keyboard.U, True)
-shifted[Keyboard.H] = (Keyboard.D, True)
-shifted[Keyboard.J] = (Keyboard.H, True)
-shifted[Keyboard.K] = (Keyboard.T, True)
-shifted[Keyboard.L] = (Keyboard.N, True)
-shifted[Keyboard.SEMICOLON] = (Keyboard.S, True)
-shifted[Keyboard.APOSTROPHE] = (Keyboard.BACK_SLASH, True)
-shifted[Keyboard.Z] = (Keyboard.SEMICOLON, True)
-shifted[Keyboard.X] = (Keyboard.Q, True)
-shifted[Keyboard.C] = (Keyboard.J, True)
-shifted[Keyboard.V] = (Keyboard.K, True)
-shifted[Keyboard.B] = (Keyboard.X, True)
-shifted[Keyboard.N] = (Keyboard.B, True)
-shifted[Keyboard.M] = (Keyboard.M, True)
-shifted[Keyboard.COMMA] = (Keyboard.W, True)
-shifted[Keyboard.DOT] = (Keyboard.V, True)
-shifted[Keyboard.FORWARD_SLASH] = (Keyboard.Z, True)
+Keyboard._SHIFT_LOCKED_KEYS = {
+    Keyboard.ONE,
+    Keyboard.TWO,
+    Keyboard.THREE,
+    Keyboard.FOUR,
+    Keyboard.FIVE,
+    Keyboard.SIX,
+    Keyboard.SEVEN,
+    Keyboard.EIGHT,
+    Keyboard.NINE,
+    Keyboard.ZERO,
+    Keyboard.R,
+    Keyboard.T,
+    Keyboard.Y,
+    Keyboard.U,
+    Keyboard.I,
+    Keyboard.O,
+    Keyboard.P,
+    Keyboard.A,
+    Keyboard.S,
+    Keyboard.D,
+    Keyboard.F,
+    Keyboard.G,
+    Keyboard.H,
+    Keyboard.J,
+    Keyboard.K,
+    Keyboard.L,
+    Keyboard.SEMICOLON,
+    Keyboard.X,
+    Keyboard.C,
+    Keyboard.V,
+    Keyboard.B,
+    Keyboard.N,
+    Keyboard.M,
+    Keyboard.COMMA,
+    Keyboard.DOT,
+    Keyboard.FORWARD_SLASH,
+}
 
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.ONE] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.TWO] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.THREE] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.FOUR] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.FIVE] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.SIX] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.SEVEN] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.EIGHT] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.NINE] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.ZERO] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.R] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.T] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.Y] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.U] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.I] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.O] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.P] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.A] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.S] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.D] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.F] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.G] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.H] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.J] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.K] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.L] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.SEMICOLON] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.X] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.C] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.V] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.B] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.N] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.M] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.COMMA] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.DOT] = True
-Keyboard._IS_KEY_SHIFT_LOCKED[Keyboard.FORWARD_SLASH] = True
+## MODIFIER AND SPECIAL KEY LAYOUT #############################################################
 
-# MODIFIER AND SPECIAL KEY LAYOUT ##############################################
+Keyboard._EXECUTION_LAYOUT = _target_layout = {}
 
+def _press_key(in_key: int, out_key: int):
+    global _target_layout
+    _target_layout[in_key] = (True, True, lambda _: Keyboard.press_key(in_key, out_key))
 
+def _press_sequence(in_key: int, should_override_mods: bool, *args: Tuple[int, Set[int]]):
+    _target_layout[in_key] = (True, True, lambda pressed_mods: Keyboard.press_sequence(*(
+        (out_key, out_mods if should_override_mods else (out_mods | pressed_mods))
+        for out_key, out_mods in args)))
+
+def _press_dual(in_key: int, out_press_mod: int, out_tap_key: int, is_sticky: bool):
+    global _target_layout
+    _target_layout[in_key] = (
+        False, False,
+        lambda _: Keyboard.press_dual(in_key, out_press_mod, out_tap_key, is_sticky))
+
+def _press_backspace(in_key: int):
+    def f(pressed_mods):
+        if Keyboard.CMD in pressed_mods:
+            Keyboard.press_sequence((Keyboard.BACKSPACE, {Keyboard.ALT}))
+        elif Keyboard.FN in pressed_mods:
+            Keyboard.press_sequence((Keyboard.LEFT, {Keyboard.SHIFT, Keyboard.CMD}),
+                                    (Keyboard.BACKSPACE, set()))
+        else:
+            Keyboard.press_key(in_key, Keyboard.BACKSPACE)
+    
+    global _target_layout
+    _target_layout[in_key] = (True, True, f)
+
+_press_dual(Keyboard.SPACE, Keyboard.SHIFT, Keyboard.SPACE, True)
+_press_dual(Keyboard.SHIFT, Keyboard.CTRL, Keyboard.ESC, True)
+_press_dual(Keyboard.ALT, Keyboard.ALT, -1, True)
+_press_dual(Keyboard.CMD, Keyboard.CMD, -1, True)
+_press_dual(Keyboard.CTRL_R, Keyboard.FN, Keyboard.TAB, True)
+_press_dual(Keyboard.DOWN, Keyboard.FN, Keyboard.ENTER, True)
+_press_key(Keyboard.ALT_R, Keyboard.LEFT)
+_press_key(Keyboard.LEFT, Keyboard.DOWN)
+_press_backspace(Keyboard.CMD_R)
+_press_backspace(Keyboard.BACKSPACE)
+
+# Aka "key mask", the key pressed to pretend modifiers aren't used for a sticky
+Keyboard._CANCELLATION_KEY = Keyboard.CMD_R
+
+## FUNCTION LAYOUT #############################################################################
+
+Keyboard._FUNCTION_LAYOUT = _target_layout = {}
+
+_press_sequence(Keyboard.A, False, (Keyboard.LEFT, {Keyboard.CMD}))
+_press_sequence(Keyboard.G, False, (Keyboard.RIGHT, {Keyboard.CMD}))
+_press_key(Keyboard.E, Keyboard.UP)
+_press_key(Keyboard.S, Keyboard.LEFT)
+_press_key(Keyboard.D, Keyboard.DOWN)
+_press_key(Keyboard.F, Keyboard.RIGHT)
+_press_sequence(Keyboard.W, False, (Keyboard.LEFT, {Keyboard.ALT}))
+_press_sequence(Keyboard.R, False, (Keyboard.RIGHT, {Keyboard.ALT}))
+
+## TIMING ######################################################################################
+
+Keyboard._MIN_STICKY_TRIGGER_DURATION = .1875
+Keyboard._MAX_STICKY_TRIGGER_DURATION = .625
+Keyboard._STICKY_DURATION = 1.

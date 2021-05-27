@@ -192,7 +192,6 @@ class ListenerMixin(object):
         self._loop = None
         try:
             tap = self._create_event_tap()
-            self._tap = tap
             if tap is None:
                 self._mark_ready()
                 return
@@ -260,11 +259,16 @@ class ListenerMixin(object):
 
         This method will call the callbacks registered on initialisation.
         """
+        is_injected = (Quartz.CGEventGetIntegerValueField(
+            event,
+            Quartz.kCGEventSourceUnixProcessID)) != 0
+        if is_injected: return event
         self._handle(proxy, event_type, event, refcon)
-        if self._intercept is not None:
-            return self._intercept(event_type, event)
-        elif self.suppress:
-            return None
+        return None
+        # if self._intercept is not None:
+        #     return self._intercept(event_type, event)
+        # elif self.suppress:
+        #     return None
 
     def _handle(self, proxy, event_type, event, refcon):
         """The device specific callback handler.
