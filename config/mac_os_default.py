@@ -1,5 +1,5 @@
 if bool(False):
-    from app import Key, Keyboard
+    from app import Keyboard
     from typing import Set, Tuple
 
 ## VIRTUAL KEY CODES (not defined by pynput) ###################################################
@@ -83,7 +83,7 @@ Keyboard._NORMAL_LAYOUT = (
         Keyboard.P: (Keyboard.L, False),
         Keyboard.LEFT_SQUARE: (Keyboard.FORWARD_SLASH, False),
         Keyboard.RIGHT_SQUARE: (Keyboard.BACK_SLASH, False),
-        Key.caps_lock.value.vk: (Keyboard.DASH, False),
+        Keyboard.CAPS_LOCK: (Keyboard.DASH, False),
         Keyboard.A: (Keyboard.A, False),
         Keyboard.S: (Keyboard.O, False),
         Keyboard.D: (Keyboard.E, False),
@@ -133,7 +133,7 @@ Keyboard._NORMAL_LAYOUT = (
         Keyboard.P: (Keyboard.L, True),
         Keyboard.LEFT_SQUARE: (Keyboard.FIVE, True),
         Keyboard.RIGHT_SQUARE: (Keyboard.TWO, True),
-        Key.caps_lock.value.vk: (Keyboard.EQUAL, True),
+        Keyboard.CAPS_LOCK: (Keyboard.EQUAL, True),
         Keyboard.A: (Keyboard.A, True),
         Keyboard.S: (Keyboard.O, True),
         Keyboard.D: (Keyboard.E, True),
@@ -230,18 +230,19 @@ def _press_backspace(in_key: int):
     _target_layout[in_key] = (True, True, f)
 
 _press_dual(Keyboard.SPACE, Keyboard.SHIFT, Keyboard.SPACE, True)
-_press_dual(Keyboard.SHIFT, Keyboard.CTRL, Keyboard.ESC, True)
-_press_dual(Keyboard.ALT, Keyboard.ALT, -1, True)
-_press_dual(Keyboard.CMD, Keyboard.CMD, -1, True)
-_press_dual(Keyboard.CTRL_R, Keyboard.FN, Keyboard.TAB, True)
-_press_dual(Keyboard.DOWN, Keyboard.FN, Keyboard.ENTER, True)
+_press_dual(Keyboard.SHIFT, Keyboard.CMD, Keyboard.ESC, True)
+_press_dual(Keyboard.CTRL, Keyboard.FN, -1, True)
+_press_dual(Keyboard.ALT, Keyboard.CTRL, -1, True)
+_press_dual(Keyboard.CMD, Keyboard.ALT, -1, True)
+_press_dual(Keyboard.CTRL_R, Keyboard.FN, Keyboard.TAB, False)
+_press_dual(Keyboard.DOWN, Keyboard.FN, Keyboard.ENTER, False)
 _press_key(Keyboard.ALT_R, Keyboard.LEFT)
 _press_key(Keyboard.LEFT, Keyboard.DOWN)
 _press_backspace(Keyboard.CMD_R)
 _press_backspace(Keyboard.BACKSPACE)
 
-# Aka "key mask", the key pressed to pretend modifiers aren't used for a sticky
-Keyboard._CANCELLATION_KEY = Keyboard.CMD_R
+# AKA modifier cancellation key, the key pressed to pretend modifiers aren't used for a sticky
+Keyboard._KEY_MASK = Keyboard.CMD_R
 
 ## FUNCTION LAYOUT #############################################################################
 

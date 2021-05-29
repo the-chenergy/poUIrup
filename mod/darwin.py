@@ -262,7 +262,13 @@ class ListenerMixin(object):
         is_injected = (Quartz.CGEventGetIntegerValueField(
             event,
             Quartz.kCGEventSourceUnixProcessID)) != 0
+        # Let pass software injected events
         if is_injected: return event
+        # Let pass media keys since they don't have well-defined key codes to be properly
+        # handled by the software
+        try:
+            if self._event_to_key(event).value._is_media: return event
+        except AttributeError: pass
         self._handle(proxy, event_type, event, refcon)
         return None
         # if self._intercept is not None:
