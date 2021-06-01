@@ -42,6 +42,7 @@ class Keyboard:
     CAPS_LOCK = CMD = CMD_R = CTRL = CTRL_R = DELETE = DOWN = END = ENTER = ESC = F1 = int(-1)
     F2 = F3 = F4 = F5 = F6 = F7 = F8 = F9 = F10 = F11 = F12 = HOME = LEFT = PAGE_DOWN = int(-1)
     PAGE_UP = RIGHT = SHIFT = SHIFT_R = SPACE = TAB = UP = int(-1)
+    _IGNORED_KEYS: Set[int] = None
     # mods -> (in_key -> (out_key, should_press_shift))
     _NORMAL_LAYOUT: Tuple[Dict[int, Tuple[int, bool]]] = None
     _SHIFT_LOCKED_KEYS: Set[int] = None
@@ -66,18 +67,17 @@ class Keyboard:
     _listener: keyboard.Listener = None
     # is_press -> (time_pressed, out_key, tap_key, is_sticky)
     _pressed_keys: Dict[int, Tuple[float, int, int, bool]] = {}
-    # (time, in_key)
-    _last_press: Tuple[float, int] = (0., -1)
+    # (time, in_key, out_key)
+    _last_press: Tuple[float, int] = (0., -1, -1)
     _last_mod = -1
     # mod -> num_currently_pressed
     # Modifiers like Fn can have num_currently_pressed up to 2 since there are two Fn keys (left
     # and right)
     _pressed_count_by_mod: DefaultDict[int, int] = defaultdict(int)
+    _pressed_continuous_mods: Set[int] = set()
     _has_stickies = False
     
     def configure():
-        print(Key.media_volume_down, Key.media_volume_down.value,
-              Key.media_volume_down.value.vk)
         for key in Key:
             const_name = str(key).split('.')[1].upper()
             if hasattr(Keyboard, const_name): setattr(Keyboard, const_name, key.value.vk)
@@ -100,13 +100,12 @@ class Keyboard:
             in_shift = not in_shift
         out_key, out_shift = Keyboard._NORMAL_LAYOUT[in_shift][in_key]
         Keyboard.press_combo(out_key, {Keyboard.SHIFT} if out_shift else set())
-        Keyboard._pressed_keys[in_key] = (time.time(), out_key, -1, False)
+        Keyboard._record_pressed_key(in_key, out_key, -1, False)
     
     def press_dual(in_key: int, out_press_mod: int, out_tap_key: int, is_sticky: bool):
         Keyboard.pressed_mods.add(out_press_mod)
         Keyboard._pressed_count_by_mod[out_press_mod] += 1
         Keyboard.press_key(in_key, out_press_mod, out_tap_key, is_sticky)
-        Keyboard._last_mod = in_key
     
     def press_sequence(*args: Tuple[int, Set[int]]):
         for out_key, out_mods in args:
@@ -123,7 +122,7 @@ class Keyboard:
                   out_tap_key: int = -1,
                   is_sticky: bool = False):
         Keyboard.touch_key(True, out_press_key)
-        Keyboard._pressed_keys[in_key] = (time.time(), out_press_key, out_tap_key, is_sticky)
+        Keyboard._record_pressed_key(in_key, out_press_key, out_tap_key, is_sticky)
     
     def touch_mods(should_press: bool, out_mods: Set[int]):
         for mod in Keyboard._MODS:
@@ -140,26 +139,38 @@ class Keyboard:
     
     def _is_virtual(key): return key >= 0x100
     
-    def _get_key(key_obj): return key_obj.value.vk if isinstance(key_obj, Key) else key_obj.vk
+    def _get_key(key_obj):
+        if key_obj in Keyboard._IGNORED_KEYS:
+            Keyboard._last_press = (0., -1, -1)
+            return -1
+        return key_obj.value.vk if isinstance(key_obj, Key) else key_obj.vk
+    
+    def _record_pressed_key(in_key, out_press_key, out_tap_key, is_sticky):
+        time_pressed = time.time()
+        Keyboard._pressed_keys[in_key] = (time_pressed, out_press_key, out_tap_key, is_sticky)
+        Keyboard._last_press = (time_pressed, in_key, out_press_key)
     
     def _release_pressed_mods():
         if not Keyboard.pressed_mods: return
+        print('Releasing all pressed mods')
         if Keyboard._has_stickies:
-            print('Masking')
+            print('  Masking stickies')
             Keyboard.touch_key(True, Keyboard._KEY_MASK)
             Keyboard.touch_key(False, Keyboard._KEY_MASK)
         for mod in Keyboard.pressed_mods: Keyboard.touch_key(False, mod)
         Keyboard.pressed_mods.clear()
         Keyboard._pressed_count_by_mod.clear()
+        Keyboard._pressed_continuous_mods.clear()
         Keyboard._has_stickies = False
     
     def _handle_listener_press(key_obj):
         in_key = Keyboard._get_key(key_obj)
+        if in_key == -1: return # Ignored key
         if in_key == Keyboard.F11:
             Keyboard.stop()
             return
         is_repetition = in_key in Keyboard._pressed_keys or in_key == Keyboard._last_press[1]
-        if not is_repetition: Keyboard._last_press = (time.time(), in_key)
+        if not is_repetition: Keyboard._last_press = (time.time(), in_key, -1)
         should_release_stickies = True
         
         if in_key in Keyboard._EXECUTION_LAYOUT or (in_key in Keyboard._FUNCTION_LAYOUT and
@@ -177,43 +188,62 @@ class Keyboard:
         else:
             # Normal press
             Keyboard.touch_key(True, in_key)
-            Keyboard._pressed_keys[in_key] = (time.time(), in_key, -1, False)
+            Keyboard._record_pressed_key(in_key, in_key, -1, False)
         
         if Keyboard._has_stickies and should_release_stickies:
             Keyboard._release_pressed_mods()
     
     def _handle_listener_release(key_obj):
         in_key = Keyboard._get_key(key_obj)
-        if in_key not in Keyboard._pressed_keys: return # Pynput bug? Why is this possible
+        if in_key not in Keyboard._pressed_keys: return
         time_pressed, out_press_key, out_tap_key, is_sticky = Keyboard._pressed_keys.pop(in_key)
         time_released = time.time()
         # Whether this key was pressed and released without any other keyboard or mouse events
         # in between
         is_continuous = Keyboard._last_press[1] == in_key
+        if out_press_key in Keyboard._MODS:
+            is_continuous |= Keyboard._last_press[2] in Keyboard._MODS
+        should_reset_last_press = is_continuous
         
         if (is_sticky and is_continuous and
-            (Keyboard._has_stickies or Keyboard._MIN_STICKY_TRIGGER_DURATION <=
+            (Keyboard._has_stickies or
+             len(Keyboard.pressed_mods) == 1 and Keyboard._MIN_STICKY_TRIGGER_DURATION <=
              time_released - time_pressed < Keyboard._MAX_STICKY_TRIGGER_DURATION)):
             # Sticky
-            print(f'Applying sticky 0x{out_press_key:02x}')
+            print('Applying stickies:', Keyboard._pressed_continuous_mods | {out_press_key})
             Keyboard._has_stickies = True
-            Timer(Keyboard._STICKY_DURATION, lambda:
-                  (Keyboard._last_mod == in_key and Keyboard._release_pressed_mods())).start()
+            for mod in Keyboard._pressed_continuous_mods:
+                Keyboard.pressed_mods.add(mod)
+                Keyboard.touch_key(True, mod)
+            last = Keyboard._last_press[1]
+            should_reset_last_press = False
+            Timer(
+                Keyboard._STICKY_DURATION, lambda:
+                (Keyboard._last_press[1] == last and Keyboard._release_pressed_mods())).start()
         else:
             # Normal release
             if out_press_key in Keyboard._MODS:
                 Keyboard._pressed_count_by_mod[out_press_key] -= 1
-                if sum(Keyboard._pressed_count_by_mod.values()) == 0:
-                    Keyboard._release_pressed_mods()
+                assert Keyboard._pressed_count_by_mod[out_press_key] >= 0
+                if Keyboard._pressed_count_by_mod[out_press_key] == 0:
+                    Keyboard.pressed_mods.remove(out_press_key)
+                    Keyboard.touch_key(False, out_press_key)
+                if not Keyboard.pressed_mods:
+                    Keyboard._pressed_continuous_mods.clear()
+                elif is_continuous:
+                    Keyboard._pressed_continuous_mods.add(out_press_key)
+                    should_reset_last_press = False
             else:
                 Keyboard.touch_key(False, out_press_key)
+            
             if (out_tap_key != -1 and is_continuous and
                     time_released - time_pressed < Keyboard._MIN_STICKY_TRIGGER_DURATION):
                 # Tap
                 Keyboard.touch_key(True, out_tap_key)
                 Keyboard.touch_key(False, out_tap_key)
+                should_reset_last_press = True
         
-        if is_continuous: Keyboard._last_press = (0., -1)
+        if should_reset_last_press: Keyboard._last_press = (0., -1, -1)
 
 class Mouse:
     _controller: mouse.Controller

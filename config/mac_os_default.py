@@ -1,6 +1,4 @@
-if bool(False):
-    from app import Keyboard
-    from typing import Set, Tuple
+if bool(False): from app import Key, Keyboard, Set, Tuple
 
 ## VIRTUAL KEY CODES (not defined by pynput) ###################################################
 
@@ -197,6 +195,8 @@ Keyboard._SHIFT_LOCKED_KEYS = {
     Keyboard.FORWARD_SLASH,
 }
 
+Keyboard._IGNORED_KEYS = {x for x in Key if str(x).startswith('Key.media_')}
+
 ## MODIFIER AND SPECIAL KEY LAYOUT #############################################################
 
 Keyboard._EXECUTION_LAYOUT = _target_layout = {}
@@ -234,8 +234,8 @@ _press_dual(Keyboard.SHIFT, Keyboard.CMD, Keyboard.ESC, True)
 _press_dual(Keyboard.CTRL, Keyboard.FN, -1, True)
 _press_dual(Keyboard.ALT, Keyboard.CTRL, -1, True)
 _press_dual(Keyboard.CMD, Keyboard.ALT, -1, True)
-_press_dual(Keyboard.CTRL_R, Keyboard.FN, Keyboard.TAB, False)
-_press_dual(Keyboard.DOWN, Keyboard.FN, Keyboard.ENTER, False)
+_press_dual(Keyboard.CTRL_R, Keyboard.FN, Keyboard.TAB, True)
+_press_dual(Keyboard.DOWN, Keyboard.FN, Keyboard.ENTER, True)
 _press_key(Keyboard.ALT_R, Keyboard.LEFT)
 _press_key(Keyboard.LEFT, Keyboard.DOWN)
 _press_backspace(Keyboard.CMD_R)
@@ -259,6 +259,6 @@ _press_sequence(Keyboard.R, False, (Keyboard.RIGHT, {Keyboard.ALT}))
 
 ## TIMING ######################################################################################
 
-Keyboard._MIN_STICKY_TRIGGER_DURATION = .1875
+Keyboard._MIN_STICKY_TRIGGER_DURATION = .125
 Keyboard._MAX_STICKY_TRIGGER_DURATION = .625
 Keyboard._STICKY_DURATION = 1.
