@@ -1,7 +1,7 @@
 '''
 poUIrup v4.2.0b
 Qianlang Chen
-T 06/08/21
+A 06/12/21
 '''
 from collections import defaultdict
 import math
@@ -35,7 +35,7 @@ class App:
         Ui.configure()
         App.configure()
         Ui.start()
-        while Ui._keyboard_listener.is_alive() and Ui._mouse_listener.is_alive():
+        while Ui._keyboard_listener.is_alive() and 'Ui._mouse_listener.is_alive()':
             time.sleep(.125)
     
     def configure():
@@ -108,14 +108,13 @@ class Ui:
                                                   suppress=True)
         Ui._keyboard_listener.start()
         Ui._keyboard_listener.wait()
-        Ui._mouse = mouse.Controller()
-        Ui._mouse_listener = mouse.Listener(on_click=Ui._handle_mouse_click,
-                                            on_move=Ui._handle_mouse_move,
-                                            on_scroll=Ui._handle_mouse_scroll,
-                                            suppress=True)
-        Ui._mouse_listener.start()
-        
-        Ui._mouse_listener.wait()
+        # Ui._mouse = mouse.Controller()
+        # Ui._mouse_listener = mouse.Listener(on_click=Ui._handle_mouse_click,
+        #                                     on_move=Ui._handle_mouse_move,
+        #                                     on_scroll=Ui._handle_mouse_scroll,
+        #                                     suppress=True)
+        # Ui._mouse_listener.start()
+        # Ui._mouse_listener.wait()
         # Sending some events here solves a weird Pynput lazy-import bug with the mouse
         Ui.touch_key(True, Ui._KEY_MASK)
         Ui.touch_key(False, Ui._KEY_MASK)
